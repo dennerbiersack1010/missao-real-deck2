@@ -1,0 +1,672 @@
+cat > /mnt/user-data/outputs/missao-real-produto-motion.html << 'HTMLEOF'
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Missão Real — Apresentação do Produto</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --g:#ADFF2F;--gd:#7AB820;--gl:rgba(173,255,47,0.12);
+  --dk:#07090A;--dk2:#0C100D;--dk3:#111815;
+  --card:#131C15;--bd:rgba(173,255,47,0.14);--bdb:rgba(173,255,47,0.45);
+  --tx:#DFF0D0;--mt:#4A6352;--wh:#fff;
+}
+html{scroll-behavior:smooth}
+body{background:var(--dk);color:var(--tx);font-family:'Syne',sans-serif;overflow-x:hidden;cursor:none}
+
+/* cursor */
+.cur{position:fixed;width:7px;height:7px;background:var(--g);border-radius:50%;pointer-events:none;z-index:9999;transition:transform .1s;mix-blend-mode:difference}
+.cur-r{position:fixed;width:30px;height:30px;border:1px solid rgba(173,255,47,.5);border-radius:50%;pointer-events:none;z-index:9998;transition:all .15s}
+
+/* noise */
+body::before{content:'';position:fixed;inset:0;z-index:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");pointer-events:none;opacity:.35}
+
+/* nav */
+nav{position:fixed;top:22px;left:50%;transform:translateX(-50%);display:flex;gap:2px;background:rgba(7,9,10,.85);backdrop-filter:blur(18px);border:1px solid var(--bd);border-radius:100px;padding:5px 7px;z-index:100}
+nav a{font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--mt);text-decoration:none;padding:7px 12px;border-radius:100px;transition:all .2s;white-space:nowrap}
+nav a:hover,nav a.on{color:var(--dk);background:var(--g)}
+
+/* progress bar */
+#prog{position:fixed;top:0;left:0;height:2px;background:var(--g);z-index:200;transition:width .3s ease}
+
+/* sections */
+section{min-height:100vh;position:relative;display:flex;align-items:center;justify-content:center;padding:90px 5vw 70px;z-index:1}
+
+/* grid overlay */
+.grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(173,255,47,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(173,255,47,.03) 1px,transparent 1px);background-size:64px 64px;mask-image:radial-gradient(ellipse at center,black 20%,transparent 75%)}
+
+/* reveal */
+.r{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}
+.r.vis{opacity:1;transform:translateY(0)}
+.rx{opacity:0;transform:translateX(-24px);transition:opacity .6s ease,transform .6s ease}
+.rx.vis{opacity:1;transform:translateX(0)}
+
+/* ---- utilities ---- */
+.lbl{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:4px;color:var(--g);margin-bottom:14px}
+.big{font-size:clamp(38px,7vw,86px);font-weight:800;line-height:.93;letter-spacing:-2.5px}
+.big em{color:var(--g);font-style:normal}
+.sub{font-family:'Space Mono',monospace;font-size:clamp(10px,1.3vw,13px);color:var(--mt);line-height:1.7;margin-top:14px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:24px 20px;transition:border-color .3s}
+.card:hover{border-color:var(--bdb)}
+.num-badge{width:36px;height:36px;border-radius:50%;background:var(--g);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;color:var(--dk);flex-shrink:0}
+.tag-pill{display:inline-block;border:1px solid var(--bdb);color:var(--g);font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;padding:5px 14px;border-radius:100px}
+.hl{color:var(--g);font-weight:700}
+.divider{width:100%;height:1px;background:var(--bd);margin:6px 0}
+
+/* ============================
+   SLIDE 1 — HERO
+   ============================ */
+#s1{flex-direction:column;text-align:center;overflow:hidden}
+#s1 .hero-glow{position:absolute;inset:0;background:radial-gradient(ellipse 70% 55% at 50% 95%,rgba(173,255,47,.06),transparent 70%)}
+
+/* ============================
+   SLIDE 2 — MANIFESTO
+   ============================ */
+#s2 .manifesto-wrap{max-width:1000px;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:2px}
+#s2 .side-old{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);padding:48px 40px}
+#s2 .side-new{background:linear-gradient(145deg,#0C1C0E,#091209);border:1px solid var(--bdb);padding:48px 40px}
+#s2 .old-txt{font-size:clamp(24px,4vw,52px);font-weight:800;line-height:1;opacity:.25}
+#s2 .new-txt{font-size:clamp(24px,4vw,52px);font-weight:800;line-height:1}
+#s2 .new-txt em{color:var(--g);font-style:normal}
+#s2 .tagline{font-size:13px;color:var(--mt);line-height:1.8;margin-top:20px;font-family:'Space Mono',monospace}
+
+/* ============================
+   SLIDE 3 — PROBLEMA
+   ============================ */
+#s3 .prob-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;max-width:900px;width:100%}
+#s3 .prob-card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:22px 20px;display:flex;gap:14px;align-items:flex-start}
+#s3 .prob-text h4{font-size:14px;font-weight:700;margin-bottom:5px}
+#s3 .prob-text p{font-size:12px;color:var(--mt);line-height:1.6;font-family:'Space Mono',monospace}
+#s3 .gap-box{max-width:900px;width:100%;background:linear-gradient(135deg,#0C1C10,#091209);border:1px solid var(--bdb);padding:22px 28px;margin-top:4px}
+#s3 .gap-box p{font-size:clamp(12px,1.6vw,16px);font-weight:700;color:var(--g);line-height:1.5}
+
+/* ============================
+   SLIDE 4 — TESE
+   ============================ */
+#s4 .tese-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;max-width:1100px;width:100%}
+#s4 .tese-col{background:var(--card);border:1px solid var(--bd);padding:28px 18px;display:flex;flex-direction:column;gap:10px;transition:border-color .3s,background .3s}
+#s4 .tese-col:hover{border-color:var(--bdb);background:#0E1810}
+#s4 .tese-col .icon{font-size:22px;margin-bottom:4px}
+#s4 .tese-col h4{font-size:13px;font-weight:700}
+#s4 .tese-col p{font-size:11px;color:var(--mt);font-family:'Space Mono',monospace;line-height:1.6}
+#s4 .tese-foot{max-width:1100px;width:100%;background:var(--card);border:1px solid var(--bd);padding:20px 28px;margin-top:2px}
+#s4 .tese-foot p{font-size:13px;color:var(--tx);line-height:1.7}
+
+/* ============================
+   SLIDE 5 — REAL PLAYER
+   ============================ */
+#s5 .rp-wrap{display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:1000px;width:100%}
+#s5 .rp-def{background:linear-gradient(160deg,#0D1E10,#091209);border:1px solid var(--bdb);padding:36px 32px}
+#s5 .rp-def .rp-title{font-size:clamp(28px,4vw,52px);font-weight:800;line-height:.95;margin-bottom:16px}
+#s5 .rp-def .rp-title em{color:var(--g);font-style:normal}
+#s5 .rp-def .rp-body{font-size:13px;color:var(--tx);line-height:1.7}
+#s5 .rp-traits{display:flex;flex-direction:column;gap:8px}
+#s5 .trait{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:16px 18px;display:flex;gap:12px;align-items:center;transition:border-color .25s}
+#s5 .trait:hover{border-color:var(--bdb)}
+#s5 .trait-dot{width:8px;height:8px;border-radius:50%;background:var(--g);flex-shrink:0}
+#s5 .trait p{font-size:13px;font-weight:600}
+#s5 .quote-strip{max-width:1000px;width:100%;background:var(--dk);border:1px solid var(--bdb);padding:18px 28px;margin-top:6px}
+#s5 .quote-strip p{font-family:'Space Mono',monospace;font-size:12px;color:var(--g);font-style:italic}
+
+/* ============================
+   SLIDE 6 — MISSÕES
+   ============================ */
+#s6 .mis-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:900px;width:100%}
+#s6 .mis-card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:22px 18px;display:flex;flex-direction:column;gap:8px;cursor:default;transition:all .25s}
+#s6 .mis-card:hover{border-color:var(--bdb);background:#0E1810;transform:translateY(-3px)}
+#s6 .mis-card .m-icon{font-size:26px}
+#s6 .mis-card h4{font-size:15px;font-weight:700}
+#s6 .mis-card p{font-size:11px;color:var(--mt);font-family:'Space Mono',monospace}
+
+/* ============================
+   SLIDE 7 — FLUXO
+   ============================ */
+#s7 .flow-wrap{max-width:1000px;width:100%}
+#s7 .flow-steps{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;width:100%}
+#s7 .step{background:var(--card);border:1px solid var(--bd);padding:24px 16px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;position:relative}
+#s7 .step .snum{width:38px;height:38px;border-radius:50%;background:var(--g);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:var(--dk)}
+#s7 .step h4{font-size:12px;font-weight:700;line-height:1.3}
+#s7 .step p{font-size:10px;color:var(--mt);font-family:'Space Mono',monospace;line-height:1.5}
+#s7 .arrow{display:flex;align-items:center;justify-content:center;color:var(--g);font-size:18px;align-self:center}
+#s7 .cycle-box{background:linear-gradient(135deg,#0C1C10,#091209);border:1px solid var(--bdb);padding:20px 28px;margin-top:4px}
+#s7 .cycle-box p{font-size:13px;color:var(--tx);line-height:1.6}
+
+/* ============================
+   SLIDE 8 — REDE SOCIAL
+   ============================ */
+#s8 .social-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:900px;width:100%}
+#s8 .feat-item{display:flex;gap:14px;align-items:flex-start;padding:16px;background:var(--card);border:1px solid var(--bd);border-radius:8px}
+#s8 .feat-dot{width:10px;height:10px;background:var(--g);border-radius:50%;margin-top:4px;flex-shrink:0}
+#s8 .feat-text{font-size:13px;font-weight:600;line-height:1.4}
+#s8 .insight{max-width:900px;width:100%;background:var(--dk);border:1px solid var(--bdb);padding:20px 28px;margin-top:8px}
+#s8 .insight p{font-size:clamp(12px,1.6vw,15px);font-style:italic;color:var(--g)}
+
+/* ============================
+   SLIDE 9 — PERFIL
+   ============================ */
+#s9 .profile-wrap{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:960px;width:100%}
+#s9 .profile-card{background:linear-gradient(160deg,#0D1E10,#091209);border:1px solid var(--bdb);border-radius:14px;padding:28px 24px}
+#s9 .p-header{display:flex;align-items:center;gap:16px;margin-bottom:20px}
+#s9 .avatar{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#1E3A20,#2A5230);border:2px solid var(--g);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+#s9 .p-name{font-size:18px;font-weight:700}
+#s9 .p-handle{font-family:'Space Mono',monospace;font-size:10px;color:var(--mt)}
+#s9 .p-level{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--g);border:1px solid var(--g);padding:3px 8px;border-radius:100px;display:inline-block;margin-top:4px}
+#s9 .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:16px}
+#s9 .stat-item{background:rgba(0,0,0,.2);padding:10px 8px;text-align:center;border-radius:6px}
+#s9 .stat-item .sv{font-size:20px;font-weight:800;color:var(--g)}
+#s9 .stat-item .sl{font-family:'Space Mono',monospace;font-size:8px;color:var(--mt)}
+#s9 .rep-bar-wrap{background:rgba(173,255,47,.08);height:6px;border-radius:100px;overflow:hidden;margin:8px 0}
+#s9 .rep-bar{height:100%;background:var(--g);border-radius:100px;width:0;transition:width 1.8s cubic-bezier(.16,1,.3,1)}
+#s9 .profile-card.vis .rep-bar{width:94%}
+#s9 .visibility-cols{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#s9 .vis-col h5{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--g);margin-bottom:10px}
+#s9 .vis-col li{font-size:11px;color:var(--mt);line-height:2;list-style:none;padding-left:12px;position:relative}
+#s9 .vis-col li::before{content:'—';position:absolute;left:0;color:var(--g)}
+
+/* ============================
+   SLIDE 10 — META + COFRINHO
+   ============================ */
+#s10 .meta-wrap{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:960px;width:100%}
+#s10 .cofrinho-card{background:linear-gradient(160deg,#0D1E10,#091209);border:1px solid var(--bdb);padding:32px 28px}
+#s10 .goal-name{font-size:22px;font-weight:700;margin-bottom:6px}
+#s10 .goal-progress{font-family:'Space Mono',monospace;font-size:12px;color:var(--g);margin-bottom:14px}
+#s10 .goal-bar-wrap{background:rgba(173,255,47,.08);height:8px;border-radius:100px;overflow:hidden;margin-bottom:20px}
+#s10 .goal-bar{height:100%;background:var(--g);border-radius:100px;width:0;transition:width 1.8s cubic-bezier(.16,1,.3,1)}
+#s10 .cofrinho-card.vis .goal-bar{width:42%}
+#s10 .cofrinho-opts li{font-size:12px;color:var(--tx);line-height:2.2;list-style:none;display:flex;align-items:center;gap:8px}
+#s10 .cofrinho-opts li::before{content:'✓';color:var(--g);font-weight:700}
+#s10 .xp-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#s10 .xp-item{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:18px 16px}
+#s10 .xp-item h4{font-size:13px;font-weight:700;color:var(--g);margin-bottom:4px}
+#s10 .xp-item p{font-size:11px;color:var(--mt);font-family:'Space Mono',monospace;line-height:1.5}
+#s10 .meta-footer{max-width:960px;width:100%;background:var(--card);border:1px solid var(--bd);padding:18px 24px;margin-top:4px}
+#s10 .meta-footer p{font-size:13px;color:var(--tx)}
+
+/* ============================
+   SLIDE 11 — CONFIANÇA
+   ============================ */
+#s11 .trust-grid{display:flex;flex-direction:column;gap:4px;max-width:900px;width:100%}
+#s11 .trust-row{display:grid;grid-template-columns:200px 1fr;align-items:center;background:var(--card);border:1px solid var(--bd);transition:border-color .25s}
+#s11 .trust-row:hover{border-color:var(--bdb)}
+#s11 .trust-key{background:linear-gradient(90deg,#0D1E10,transparent);padding:18px 20px;font-size:13px;font-weight:700;color:var(--g)}
+#s11 .trust-val{padding:18px 20px;font-family:'Space Mono',monospace;font-size:11px;color:var(--mt);line-height:1.5}
+#s11 .no-pix{max-width:900px;width:100%;background:var(--dk);border:1px solid var(--bdb);padding:18px 24px;margin-top:4px}
+#s11 .no-pix p{font-family:'Space Mono',monospace;font-size:12px;color:var(--g)}
+
+/* ============================
+   SLIDE 12 — MAPA DE TELAS
+   ============================ */
+#s12 .screens-wrap{display:flex;flex-direction:column;gap:6px;max-width:1000px;width:100%}
+#s12 .screen-row{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+#s12 .scr{background:var(--card);border:1px solid var(--bd);padding:20px 16px;display:flex;flex-direction:column;gap:8px;transition:all .25s;cursor:default}
+#s12 .scr:hover{border-color:var(--bdb);background:#0E1810;transform:translateY(-2px)}
+#s12 .scr .s-num{font-family:'Space Mono',monospace;font-size:10px;color:var(--g);letter-spacing:2px}
+#s12 .scr .s-name{font-size:15px;font-weight:700}
+#s12 .scr .s-desc{font-family:'Space Mono',monospace;font-size:10px;color:var(--mt)}
+#s12 .menu-bar{background:linear-gradient(135deg,#0C1C10,#091209);border:1px solid var(--bdb);padding:16px 24px;display:flex;justify-content:center;gap:40px}
+#s12 .menu-bar span{font-family:'Space Mono',monospace;font-size:10px;color:var(--g);letter-spacing:2px}
+
+/* ============================
+   SLIDE 13 — MODELO DE NEGÓCIO
+   ============================ */
+#s13 .biz-list{display:flex;flex-direction:column;gap:4px;max-width:960px;width:100%}
+#s13 .biz-row{display:grid;grid-template-columns:200px 1fr;background:var(--card);border:1px solid var(--bd);transition:border-color .25s}
+#s13 .biz-row:hover{border-color:var(--bdb)}
+#s13 .biz-key{padding:20px 20px;font-size:13px;font-weight:700;color:var(--g);border-right:1px solid var(--bd)}
+#s13 .biz-val{padding:20px 24px;font-size:13px;color:var(--tx);display:flex;align-items:center}
+#s13 .biz-foot{max-width:960px;width:100%;background:var(--dk);border:1px solid var(--bdb);padding:18px 24px;margin-top:4px}
+#s13 .biz-foot p{font-size:clamp(12px,1.5vw,14px);font-weight:700;color:var(--g)}
+
+/* ============================
+   SLIDE 14 — ROADMAP
+   ============================ */
+#s14 .road-wrap{display:flex;flex-direction:column;gap:6px;max-width:960px;width:100%;position:relative}
+#s14 .road-wrap::before{content:'';position:absolute;left:24px;top:0;bottom:0;width:1px;background:var(--bd)}
+#s14 .mvp-item{display:grid;grid-template-columns:60px 1fr;gap:20px;align-items:center}
+#s14 .mvp-dot{width:48px;height:48px;border-radius:50%;background:var(--g);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:10px;font-weight:700;color:var(--dk);z-index:1;position:relative;flex-shrink:0}
+#s14 .mvp-content{background:var(--card);border:1px solid var(--bd);padding:20px 22px;border-radius:8px;transition:border-color .25s}
+#s14 .mvp-content:hover{border-color:var(--bdb)}
+#s14 .mvp-content h4{font-size:16px;font-weight:700;margin-bottom:4px}
+#s14 .mvp-content p{font-family:'Space Mono',monospace;font-size:10px;color:var(--mt);line-height:1.6}
+#s14 .road-foot{max-width:960px;width:100%;background:linear-gradient(135deg,#0C1C10,#091209);border:1px solid var(--bdb);padding:18px 24px;margin-top:6px}
+#s14 .road-foot p{font-size:13px;color:var(--tx);font-style:italic}
+
+/* ============================
+   SLIDE 15 — CAMPANHA
+   ============================ */
+#s15{overflow:hidden}
+#s15 .camp-bg{position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 50%,rgba(173,255,47,.05),transparent 70%)}
+#s15 .camp-wrap{display:flex;flex-direction:column;align-items:center;text-align:center;gap:32px;max-width:800px}
+#s15 .camp-headline{font-size:clamp(36px,7vw,90px);font-weight:800;line-height:.9;letter-spacing:-3px}
+#s15 .camp-headline s{color:rgba(255,255,255,.2);text-decoration:line-through;text-decoration-color:var(--g)}
+#s15 .camp-headline em{color:var(--g);font-style:normal}
+#s15 .camp-pills{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+#s15 .cp{background:var(--card);border:1px solid var(--bdb);border-radius:100px;padding:10px 20px;font-size:12px;font-family:'Space Mono',monospace;color:var(--g)}
+
+/* ============================
+   SLIDE 16 — FINAL
+   ============================ */
+#s16{overflow:hidden;min-height:80vh}
+#s16 .fin-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 50%,rgba(173,255,47,.05),transparent 70%)}
+#s16 .fin-center{display:flex;flex-direction:column;align-items:center;text-align:center;gap:24px;max-width:900px}
+#s16 .fin-title{font-size:clamp(32px,6vw,80px);font-weight:800;line-height:.95;letter-spacing:-2px}
+#s16 .fin-title em{color:var(--g);font-style:normal}
+#s16 .fin-body{font-size:clamp(13px,1.7vw,17px);color:var(--mt);line-height:1.7;max-width:680px;font-family:'Space Mono',monospace}
+#s16 .fin-cta{background:var(--card);border:1px solid var(--bdb);padding:18px 28px;font-family:'Space Mono',monospace;font-size:11px;color:var(--g);letter-spacing:2px}
+#s16 .blink{animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* scroll hint */
+.scroll-hint{position:absolute;bottom:36px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;font-family:'Space Mono',monospace;font-size:8px;color:var(--mt);letter-spacing:2px;animation:fadeUp .8s 1.3s forwards;opacity:0}
+.scroll-line{width:1px;height:50px;background:linear-gradient(var(--g),transparent);animation:scp 2s infinite}
+@keyframes scp{0%,100%{opacity:.3}50%{opacity:1}}
+@keyframes fadeUp{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+/* hero anims */
+.h-anim{opacity:0;animation:fadeUp2 .8s forwards}
+.h-anim:nth-child(1){animation-delay:.2s}
+.h-anim:nth-child(2){animation-delay:.4s}
+.h-anim:nth-child(3){animation-delay:.6s}
+.h-anim:nth-child(4){animation-delay:.8s}
+@keyframes fadeUp2{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* stagger delays */
+.d1{transition-delay:.05s}.d2{transition-delay:.15s}.d3{transition-delay:.25s}
+.d4{transition-delay:.35s}.d5{transition-delay:.45s}.d6{transition-delay:.55s}
+
+@media(max-width:900px){
+  #s2 .manifesto-wrap,#s4 .tese-grid,#s7 .flow-steps,#s9 .profile-wrap,#s10 .meta-wrap,#s12 .screen-row{grid-template-columns:1fr 1fr}
+  #s4 .tese-grid{grid-template-columns:1fr}
+  nav{display:none}
+}
+@media(max-width:600px){
+  #s3 .prob-grid,#s6 .mis-grid,#s8 .social-grid,#s10 .xp-grid,#s9 .visibility-cols{grid-template-columns:1fr}
+  #s5 .rp-wrap,#s2 .manifesto-wrap,#s9 .profile-wrap,#s10 .meta-wrap{grid-template-columns:1fr}
+  #s11 .trust-row,#s13 .biz-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="cur" id="cur"></div>
+<div class="cur-r" id="curR"></div>
+<div id="prog"></div>
+
+<nav>
+  <a href="#s1" class="on">INÍCIO</a>
+  <a href="#s2">MANIFESTO</a>
+  <a href="#s3">PROBLEMA</a>
+  <a href="#s4">TESE</a>
+  <a href="#s5">REAL PLAYER</a>
+  <a href="#s6">MISSÕES</a>
+  <a href="#s7">FLUXO</a>
+  <a href="#s8">SOCIAL</a>
+  <a href="#s9">PERFIL</a>
+  <a href="#s10">METAS</a>
+  <a href="#s11">CONFIANÇA</a>
+  <a href="#s12">TELAS</a>
+  <a href="#s13">NEGÓCIO</a>
+  <a href="#s14">ROADMAP</a>
+  <a href="#s15">CAMPANHA</a>
+  <a href="#s16">FIM</a>
+</nav>
+
+<!-- ═══════════════════ S1 HERO ═══════════════════ -->
+<section id="s1">
+  <div class="hero-glow"></div>
+  <div class="grid-bg"></div>
+  <div style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:16px;position:relative;z-index:1">
+    <span class="tag-pill h-anim">APRESENTAÇÃO DO PRODUTO</span>
+    <h1 class="big h-anim" style="font-size:clamp(52px,10vw,130px)">missão<br><em>real</em></h1>
+    <p class="h-anim" style="font-family:'Space Mono',monospace;font-size:clamp(12px,1.5vw,15px);color:var(--mt);letter-spacing:1px">REDE SOCIAL DA VIDA REAL&nbsp;&nbsp;·&nbsp;&nbsp;MISSÕES · RENDA · REPUTAÇÃO</p>
+    <div class="h-anim" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:8px">
+      <span style="background:var(--card);border:1px solid var(--bd);border-radius:100px;padding:8px 16px;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px">PRODUTO</span>
+      <span style="background:var(--card);border:1px solid var(--bd);border-radius:100px;padding:8px 16px;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px">MARKETPLACE</span>
+      <span style="background:var(--card);border:1px solid var(--bd);border-radius:100px;padding:8px 16px;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px">REDE SOCIAL</span>
+      <span style="background:var(--card);border:1px solid var(--bdb);border-radius:100px;padding:8px 16px;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--g)">GAME DE METAS</span>
+    </div>
+  </div>
+  <div class="scroll-hint"><span>SCROLL</span><div class="scroll-line"></div></div>
+</section>
+
+<!-- ═══════════════════ S2 MANIFESTO ═══════════════════ -->
+<section id="s2">
+  <div style="max-width:1000px;width:100%;display:flex;flex-direction:column;gap:16px">
+    <div class="lbl rx r">02 — MANIFESTO</div>
+    <h2 class="big r" style="font-size:clamp(28px,4vw,52px)">O que muda<br>com a <em>Missão Real</em></h2>
+    <div class="manifesto-wrap r d2">
+      <div class="side-old">
+        <p style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--mt);margin-bottom:16px">O MODELO ANTIGO</p>
+        <p class="old-txt">A internet<br>monetizou<br>atenção.</p>
+        <p class="tagline">Lives pedindo moeda.<br>Algoritmo incerto.<br>Meses de esforço por retorno irreal.</p>
+      </div>
+      <div class="side-new">
+        <p style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--g);margin-bottom:16px">O MODELO NOVO</p>
+        <p class="new-txt">Nós monetizamos<br><em>ação.</em></p>
+        <p class="tagline">Tarefas concluídas.<br>Valor acordado.<br>Metas, posts, seguidores e reputação.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ S3 PROBLEMA ═══════════════════ -->
+<section id="s3">
+  <div style="max-width:900px;width:100%;display:flex;flex-direction:column;gap:14px">
+    <div class="lbl rx r">03 — O PROBLEMA</div>
+    <h2 class="big r" style="font-size:clamp(26px,4vw,48px)">Redes dão palco.<br>O mundo real precisa de <em>presença</em>.</h2>
+    <div class="prob-grid r d2">
+      <div class="prob-card d1"><div class="num-badge">01</div><div class="prob-text"><h4>Renda extra informal</h4><p>Pix por fora, calote, golpes e pouca confiança.</p></div></div>
+      <div class="prob-card d2"><div class="num-badge">02</div><div class="prob-text"><h4>Solidão e falta de companhia</h4><p>Querem fazer coisas simples, mas não sozinhos.</p></div></div>
+      <div class="prob-card d3"><div class="num-badge">03</div><div class="prob-text"><h4>Criadores frustrados</h4><p>Lives, presentes, algoritmo — retorno incerto.</p></div></div>
+      <div class="prob-card d4"><div class="num-badge">04</div><div class="prob-text"><h4>Reputação superficial</h4><p>Curtidas não provam compromisso ou ação real.</p></div></div>
+    </div>
+    <div class="gap-box r d3"><p>O espaço aberto: uma rede social onde a reputação nasce de <span class="hl">missões reais</span>, não só de aparência.</p></div>
+  </div>
+</section>
+
+<!-- ═══════════════════ S4 TESE ═══════════════════ -->
+<section id="s4">
+  <div style="max-width:1100px;width:100%;display:flex;flex-direction:column;gap:14px">
+    <div class="lbl rx r">04 — A TESE DO PRODUTO</div>
+    <h2 class="big r" style="font-size:clamp(22px,3.5vw,44px)">Instagram + TikTok + Uber<br>+ Mercado Livre + <em>Game de metas</em></h2>
+    <div class="tese-grid r d2">
+      <div class="tese-col d1"><div class="icon">📱</div><h4>Rede social</h4><p>posts, vídeos, stories, seguidores</p></div>
+      <div class="tese-col d2"><div class="icon">🎯</div><h4>Missões</h4><p>tarefas online e presenciais</p></div>
+      <div class="tese-col d3"><div class="icon">🔒</div><h4>Pagamento protegido</h4><p>valor seguro até conclusão</p></div>
+      <div class="tese-col d4"><div class="icon">🏆</div><h4>Metas</h4><p>cofrinho e trilha de conquista</p></div>
+      <div class="tese-col d5"><div class="icon">⭐</div><h4>Reputação Real</h4><p>avaliações, selos, níveis</p></div>
+    </div>
+    <div class="tese-foot r d4"><p>Missão Real é uma <span class="hl">rede social de ação</span>: a pessoa sai do feed, cumpre uma missão, ganha pelo combinado e transforma isso em reputação.</p></div>
+  </div>
+</section>
+
+<!-- ═══════════════════ S5 REAL PLAYER ═══════════════════ -->
+<section id="s5">
+  <div style="max-width:1000px;width:100%;display:flex;flex-direction:column;gap:14px">
+    <div class="lbl rx r">05 — REAL PLAYER</div>
+    <div class="rp-wrap r d1">
+      <div class="rp-def">
+        <p class="rp-title">Real<br><em>Player</em></p>
+        <p class="rp-body">Não é apenas "prestador". É quem cumpre missões, cria conteúdo, ganha seguidores, sobe de nível e constrói influência dentro da rede.</p>
+      </div>
+      <div class="rp-traits">
+        <div class="trait d1"><div class="trait-dot"></div><p>Ganha pelo valor combinado</p></div>
+        <div class="trait d2"><div class="trait-dot"></div><p>Posta fotos, vídeos e stories</p></div>
+        <div class="trait d3"><div class="trait-dot"></div><p>Recebe avaliações e selos</p></div>
+        <div class="trait d4"><div class="trait-dot"></div><p>Vira influencer da vida real</p></div>
+        <div class="trait d5"><div class="trait-dot"></div><p>Sobe de nível e visibilidade</p></div>
+      </div>
+    </div>
+    <div class="quote-strip r d3"><p>"Streamer da vida real" com renda por missão, não por moedas.</p></div>
+  </div>
+</section>
+
+<!-- ═══════════════════ S6 MISSÕES ═══════════════════ -->
+<section id="s6">
+  <div style="max-width:900px;width:100%;display:flex;flex-direction:column;gap:14px">
+    <div class="lbl rx r">06 — MISSÕES: O QUE ENTRA NO APP</div>
+    <h2 class="big r" style="font-size:clamp(24px,4vw,52px)">Tarefas jovens por fora.<br><em>Utilidade ampla</em> por dentro.</h2>
+    <div class="mis-grid r d2">
+      <div class="mis-card d1"><div class="m-icon">🎵</div><h4>Eventos</h4><p>shows, festas, networking</p></div>
+      <div class="mis-card d2"><div class="m-icon">🎮</div><h4>Games</h4><p>duo, squad, companhia gamer</p></div>
+      <div class="mis-card d3"><div class="m-icon">📸</div><h4>Conteúdo</h4><p>reels, fotos, bastidores</p></div>
+      <div class="mis-card d4"><div class="m-icon">🌆</div><h4>Rolês</h4><p>cinema, café, parque, passeio</p></div>
+      <div class="mis-card d5"><div class="m-icon">💬</div><h4>Conversa</h4><p>call, estudo, idioma, companhia</p></div>
+      <div class="mis-card d6"><div class="m-icon">👨‍👩‍👧</div><h4>Família</h4><p>idosos, caminhada, consulta leve</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ S7 FLUXO ═══════════════════ -->
+<section id="s7">
+  <div class="flow-wrap" style="display:flex;flex-direction:column;gap:14px">
+    <div class="lbl rx r">07 — FLUXO PRINCIPAL</div>
+    <h2 class="big r" style="font-size:clamp(22px,3.5vw,44px)">Como a missão vira <em>renda,<br>conteúdo e reputação</em></h2>
+    <div class="flow-steps r d2">
+      <div class="step d1"><div class="snum">01</div><h4>Publicar missão</h4><p>Contratante define tarefa, valor, local e regras.</p></div>
+      <div class="step d2"><div class="snum">02</div><h4>Escolher Real Player</h4><p>Perfis verificados se candidatam ou são convidados.</p></div>
+      <div class="step d3"><div class="snum">03</div><h4>Pagamento protegido</h4><p>Valor fica seguro dentro da plataforma.</p></div>
+      <div class="step d4"><div class="snum">04</div><h4>Cumprir e confirmar</h4><p>Check-in, conclusão e avaliação dupla.</p></div>
+      <div class="step d5"><div class="snum">05</div><h4>Progredir e postar</h4><p>Dinheiro vai para meta, selo libera, post vira conteúdo.</p></div>
+    </div>
+    <div class="cycle-box r d4"><p>O ciclo fecha quando a reputação aumenta e gera mais <span class="hl">convites, seguidores e missões</span>.</p></div>
+  </div>
+</section>
+
+<!-- ═══════════════════ S8 CARA DE REDE SOCIAL ═══════════════════ -->
+<section id="s8">
+  <div style="max-width:900px;width:100%;display:flex;flex-direction:column;gap:14px">
+    <div class="lbl rx r">08 — CARA DE REDE SOCIAL</div>
+    <h2 class="big r" style="font-size:clamp(22px,3.5vw,44px)">Tão <em>social</em> quanto<br>transacional.</h2>
+    <div class="social-grid r d2">
+      <div class="feat-item d1"><div class="feat-dot"></div><p class="feat-text">Fotos, vídeos e stories</p></div>
+      <div class="feat-item d2"><div class="feat-dot"></div><p class="feat-text">Seguidores, curtidas e comentários</p></div>
+      <div class="feat-item d3"><div class="feat-dot"></div><p class="feat-text">Missões concluídas como posts</p></div>
+      <div class="feat-item d4"><div class="feat-dot"></div><p class="feat-text">Cards de meta e conquistas</p></div>
+      <div class="feat-item d5"><div class="feat-dot"></div><p class="feat-text">Botão "convidar para missão"</p></div>
+      <div class="feat-item d6"><div class="feat-dot"></div><p class="feat-text">Reputação Real acima da vaidade</p></div>
+    </div>
+    <div class="insight r d4"><p>"A pessoa não deixa de ser influencer. Ela vira influente dentro da plataforma — com prova de ação real."</p></div>
+  </div>
+</section>
+
+<!-- ═══════════════════ S9 PERFIL ═══════════════════ -->
+<section id="s9">
+  <div style="max-width:960px;width:100%;display:flex;flex-direction:column;gap:14px">
+    <div class="lbl rx r">09 — PERFIL PÚBLICO</div>
+    <h2 class="big r" style="font-size:clamp(22px,3.5vw,44px)">Onde renda, conteúdo<br>e <em>confiança</em> se encontram.</h2>
+    <div class="profile-wrap r d2">
+      <div class="profile-card d1">
+        <div class="p-header">
+          <div class="avatar">👤</div>
+          <div>
+            <p class="p-name">Bia Martins</p>
+            <p class="p-handle">@bia.realplayer</p>
+            <span class="p-level">REAL PLAYER NÍVEL 12</span>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-item"><div class="sv">4.9★</div><div class="sl">AVALIAÇÃO</div></div>
+          <div class="stat-item"><div class="sv">2.4k</div><div class="sl">SEGUIDORES</div></div>
+          <div class="stat-item"><div class="sv">86</div><div class="sl">MISSÕES</div></div>
+          <div class="stat-item"><div class="sv">94</div><div class="sl">REPUTAÇÃO</div></div>
+        </div>
+        <p style="font-family:'Space Mono',monospace;font-size:9px;color:var(--g);letter-spacing:2px;margin-bottom:6px">REPUTAÇÃO REAL 94/100</p>
+        <div class="rep-bar-wrap"><div class="rep-bar"></div></div>
+        <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+          <span style="background:var(--gl);border:1px solid var(--bdb);border-radius:4px;padding:6px 12px;font-family:'Space Mono',monospace;font-size:9px;color:var(--g)">Posts</span>
+          <span style="background:var(--gl);border:1px solid var(--bd);border-radius:4px;padding:6px 12px;font-family:'Space Mono',monospace;font-size:9px;color:var(--mt)">Vídeos</span>
+          <span style="background:var(--gl);border:1px solid var(--bd);border-radius:4px;padding:6px 12px;font-family:'Space Mono',monospace;font-size:9px;color:var(--mt)">Missões</span>
+          <span style="background:var(--gl);border:1px solid var(--bd);border-radius:4px;padding:6px 12px;font-family:'Space Mono',monospace;font-size:9px;color:var(--mt)">Selos</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:22px 20px">
+          <div class="visibility-cols">
+            <div class="vis-col">
+              <h5>PÚBLICO</h5>
+              <ul>
+                <li>Foto, nome, bio e cidade</li>
+                <li>Seguidores e posts</li>
+                <li>Avaliação, selos e nível</li>
+                <li>Botão de convite</li>
+              </ul>
+            </div>
+            <div class="vis-col">
+              <h5>PRIVADO</h5>
+              <ul>
+                <li>Meta financeira</li>
+                <li>Saldo e carteira</li>
+                <li>Valor restante</li>
+                <li>Conquistas travadas</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ S10 META + COFRINHO ═══════════════════ -->
+<section id="s10">
+  <div style="max-width:960px;width:100%;display:flex;flex-direction:column;gap:14px">
+    <div class="lbl rx r">10 — META + COFRINHO + TRILHA</div>
+    <h2 class="big r" style="font-size:clamp(22px,3.5vw,44px)">A mecânica que <em>prende</em><br>de forma saudável.</h2>
+    <div class="meta-wrap r d2">
+      <div class="cofrinho-card d1">
+        <p class="goal-name">🎯 Celular novo</p>
+        <p class="goal-progress">R$ 1.250 / R$ 3.000 — 42%</p>
+        <div class="goal-bar-wrap"><div class="goal-bar"></div></div>
+        <ul class="cofrinho-opts">
+          <li>Meta por objetivo, não meta diária</li>
+          <li>Saque livre, flexível ou travado</li>
+          <li>Trilha privada para o usuário</li>
+        </ul>
+      </div>
+      <div class="xp-grid d2">
+        <div class="xp-item"><h4>XP</h4><p>tarefas concluídas + avaliação</p></div>
+        <div class="xp-item"><h4>Selos</h4><p>pontualidade, categoria, segurança</p></div>
+        <div class="xp-item"><h4>Níveis</h4><p>benefícios e visibilidade</p></div>
+        <div class="xp-item"><h4>Cards</h4><p>progresso compartilhável</p></div>
+      </div>
+    </div>
+    <div class="meta-footer r d4"><p>Cada missão move o avatar e aumenta a chance de ser <span class="hl">visto, seguido e contratado</span>.</p></div>
+  </div>
+</section>
+
+<!-- ═══════════════════ S11 CONFIANÇA ═══════════════════ -->
+<section id="s11">
+  <div style="max-width:900px;width:100%;display:flex;flex-direction:column;gap:14px">
+    <div class="lbl rx r">11 — CONFIANÇA OPERACIONAL</div>
+    <h2 class="big r" style="font-size:clamp(22px,3.5vw,44px)">Social por fora.<br><em>Infraestrutura</em> por dentro.</h2>
+    <div class="trust-grid r d2">
+      <div class="trust-row d1"><div class="trust-key">Pagamento protegido</div><div class="trust-val">Valor só libera após conclusão ou prazo sem disputa</div></div>
+      <div class="trust-row d2"><div class="trust-key">Verificação</div><div class="trust-val">CPF, selfie, documento e conta no mesmo CPF</div></div>
+      <div class="trust-row d3"><div class="trust-key">Antecedentes</div><div class="trust-val">Obrigatório para missões presenciais e família</div></div>
+      <div class="trust-row d4"><div class="trust-key">Localização</div><div class="trust-val">Ativa apenas durante missão presencial</div></div>
+      <div class="trust-row d5"><div class="trust-key">Avaliação dupla</div><div class="trust-val">Contratante e Real Player constroem reputação</div></div>
+    </div>
+    <div class="no-pix r d4"><p>Sem Pix por fora. Sem dependência de promessa. Sem liberação sem confirmação.</p></div>
+  </div>
+</section>
+
+<!-- ═══════════════════ S12 MAPA DE TELAS ═══════════════════ -->
+<section id="s12">
+  <div style="max-width:1000px;width:100%;display:flex;flex-direction:column;gap:14px">
+    <div class="lbl rx r">12 — MAPA DE TELAS</div>
+    <h2 class="big r" style="font-size:clamp(22px,3.5vw,44px)">Navegação com <em>cara<br>de rede social</em>.</h2>
+    <div class="screens-wrap r d2">
+      <div class="screen-row">
+        <div class="scr d1"><div class="s-num">01</div><div class="s-name">Splash</div><div class="s-desc">logo + frase</div></div>
+        <div class="scr d2"><div class="s-num">02</div><div class="s-name">Onboarding</div><div class="s-desc">ganhe vivendo</div></div>
+        <div class="scr d3"><div class="s-num">03</div><div class="s-name">Cadastro</div><div class="s-desc">perfil + verificação</div></div>
+        <div class="scr d4"><div class="s-num">04</div><div class="s-name">Início</div><div class="s-desc">meta + feed + missões</div></div>
+      </div>
+      <div class="screen-row">
+        <div class="scr d1"><div class="s-num">05</div><div class="s-name">Missões</div><div class="s-desc">ganhar ou publicar</div></div>
+        <div class="scr d2"><div class="s-num">06</div><div class="s-name">Criar</div><div class="s-desc">post, story, missão, meta</div></div>
+        <div class="scr d3"><div class="s-num">07</div><div class="s-name">Rede</div><div class="s-desc">vídeos, fotos, stories</div></div>
+        <div class="scr d4"><div class="s-num">08</div><div class="s-name">Perfil</div><div class="s-desc">reputação + conteúdo</div></div>
+      </div>
+    </div>
+    <div class="menu-bar r d4">
+      <span>INÍCIO</span><span>MISSÕES</span><span>CRIAR</span><span>REDE</span><span>PERFIL</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ S13 MODELO DE NEGÓCIO ═══════════════════ -->
+<section id="s13">
+  <div style="max-width:960px;width:100%;display:flex;flex-direction:column;gap:14px">
+    <div class="lbl rx r">13 — MODELO DE NEGÓCIO</div>
+    <h2 class="big r" style="font-size:clamp(22px,3.5vw,44px)">A monetização nasce<br>da <em>transação</em>, cresce com a rede.</h2>
+    <div class="biz-list r d2">
+      <div class="biz-row d1"><div class="biz-key">Comissão por missão</div><div class="biz-val">15% a 30% sobre cada valor transacionado</div></div>
+      <div class="biz-row d2"><div class="biz-key">Taxa de proteção</div><div class="biz-val">Pequena taxa para pagamento protegido e suporte</div></div>
+      <div class="biz-row d3"><div class="biz-key">Premium contratante</div><div class="biz-val">Buscar perfis, filtros avançados, convites privados</div></div>
+      <div class="biz-row d4"><div class="biz-key">Real Player Pro</div><div class="biz-val">Destaque, analytics, cards premium e avatar</div></div>
+      <div class="biz-row d5"><div class="biz-key">Loja e produtos</div><div class="biz-val">Skins, pulseiras, plaquinhas, bebidas e itens da marca</div></div>
+    </div>
+    <div class="biz-foot r d4"><p>O produto começa como marketplace, vira rede social e depois <span style="font-style:italic">marca de pertencimento</span>.</p></div>
+  </div>
+</section>
+
+<!-- ═══════════════════ S14 ROADMAP ═══════════════════ -->
+<section id="s14">
+  <div style="max-width:960px;width:100%;display:flex;flex-direction:column;gap:14px">
+    <div class="lbl rx r">14 — ROADMAP DE CONSTRUÇÃO</div>
+    <h2 class="big r" style="font-size:clamp(22px,3.5vw,44px)">Do teste manual<br>ao app com <em>rede social</em>.</h2>
+    <div class="road-wrap r d2">
+      <div class="mvp-item d1"><div class="mvp-dot">MVP 0</div><div class="mvp-content"><h4>Landing + lista de espera</h4><p>operação manual, primeiras missões assistidas, validação de demanda</p></div></div>
+      <div class="mvp-item d2"><div class="mvp-dot">MVP 1</div><div class="mvp-content"><h4>Perfis, missões e trilha</h4><p>candidatura, avaliação e trilha simples de metas</p></div></div>
+      <div class="mvp-item d3"><div class="mvp-dot">MVP 2</div><div class="mvp-content"><h4>Pagamento + rede social</h4><p>pagamento protegido, carteira, chat, stories e verificação</p></div></div>
+      <div class="mvp-item d4"><div class="mvp-dot">MVP 3</div><div class="mvp-content"><h4>App mobile + premium</h4><p>feed vertical, IA de avatar e funcionalidades premium</p></div></div>
+    </div>
+    <div class="road-foot r d5"><p>Validação antes de complexidade: primeiro provar demanda, depois automatizar o dinheiro e escalar a rede.</p></div>
+  </div>
+</section>
+
+<!-- ═══════════════════ S15 CAMPANHA ═══════════════════ -->
+<section id="s15">
+  <div class="camp-bg"></div>
+  <div class="grid-bg"></div>
+  <div class="camp-wrap" style="position:relative;z-index:1">
+    <div class="lbl r">15 — CAMPANHA DE ENTRADA</div>
+    <div class="camp-headline r d1">
+      Saia da <s>live</s>.<br>Entre em <em>missão</em>.
+    </div>
+    <p class="sub r d2" style="max-width:600px;text-align:center">A campanha não vende "ganhe dinheiro fácil".<br>Ela vende vida real, movimento, segurança e meta pessoal.</p>
+    <div class="camp-pills r d3">
+      <span class="cp">ganhe pelo valor combinado</span>
+      <span class="cp">poste sua jornada</span>
+      <span class="cp">crie público na plataforma</span>
+      <span class="cp">construa Reputação Real</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ S16 FINAL ═══════════════════ -->
+<section id="s16">
+  <div class="fin-bg"></div>
+  <div class="fin-center" style="position:relative;z-index:1">
+    <span class="tag-pill r">16 — PRÓXIMO PASSO</span>
+    <h2 class="fin-title r d1">A nova rede social<br>não te <em>prende</em>.<br>Ela te <em>move</em>.</h2>
+    <p class="fin-body r d2">Missão Real transforma ações reais em renda, reputação, conteúdo, público e pertencimento.</p>
+    <div class="fin-cta r d3">PRÓXIMO PASSO: PROTÓTIPO NAVEGÁVEL + LANDING DE LISTA DE ESPERA<span class="blink">_</span></div>
+  </div>
+</section>
+
+<script>
+// cursor
+const cur=document.getElementById('cur'),curR=document.getElementById('curR');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx-3.5+'px';cur.style.top=my-3.5+'px'});
+(function anim(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;curR.style.left=rx-15+'px';curR.style.top=ry-15+'px';requestAnimationFrame(anim)})();
+
+// progress bar
+window.addEventListener('scroll',()=>{
+  const st=window.scrollY,h=document.body.scrollHeight-window.innerHeight;
+  document.getElementById('prog').style.width=(st/h*100)+'%';
+});
+
+// nav active
+const secs=document.querySelectorAll('section');
+const links=document.querySelectorAll('nav a');
+const navObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.remove('on'));const l=document.querySelector(`nav a[href="#${e.target.id}"]`);if(l)l.classList.add('on')}});
+},{threshold:.4});
+secs.forEach(s=>navObs.observe(s));
+
+// reveal on scroll
+const reveals=document.querySelectorAll('.r,.rx');
+const ro=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('vis')})},{threshold:.12});
+reveals.forEach(el=>ro.observe(el));
+</script>
+</body>
+</html>
+HTMLEOF
+echo "done"
